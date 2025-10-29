@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as admin from 'firebase-admin';
+import { FileUploadController } from './fileUpload.controller';
 
 @Module({
   imports: [
@@ -20,10 +21,10 @@ import * as admin from 'firebase-admin';
       }),
     }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, FileUploadController],
   providers: [
     AppService,
-    {
+    /* {
       provide: 'FIREBASE_BUCKET',
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
@@ -38,8 +39,10 @@ import * as admin from 'firebase-admin';
 
         return admin.storage().bucket();
       },
-    },
+    }, */
   ],
-  exports: ['FIREBASE_BUCKET'],
+  exports: [
+    /* 'FIREBASE_BUCKET' */
+  ],
 })
 export class AppModule {}

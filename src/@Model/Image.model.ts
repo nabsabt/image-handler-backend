@@ -6,3 +6,12 @@ export interface ImageModel {
   modelType: string;
   modelDesc: string;
 }
+
+export interface ImageProductDetails {
+  productID: number;
+  productImages: string[];
+  productThumbnailImage: string;
+  defaultPrice: number;
+  productDescription: string;
+  productName: string;
+}

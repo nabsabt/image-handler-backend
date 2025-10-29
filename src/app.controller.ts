@@ -1,6 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ImageModel } from './@Model/Image.model';
+import { ImageModel, ImageProductDetails } from './@Model/Image.model';
 
 @Controller()
 export class AppController {
@@ -19,5 +19,12 @@ export class AppController {
   @Get('getImageProduct/:id')
   public async getProduct(@Param('id') id: number): Promise<Array<ImageModel>> {
     return this.appService.provideImageProductDetails(id);
+  }
+
+  @Post('postNewProduct')
+  public async postNewProduct(
+    @Body() body: { newProd: ImageProductDetails },
+  ): Promise<{ status: string }> {
+    return this.appService.saveNewImageProduct(body.newProd);
   }
 }

@@ -2,12 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Mongoose } from 'mongoose';
 import { Bucket } from '@google-cloud/storage';
+import { ImageProductDetails } from './@Model/Image.model';
 
 @Injectable()
 export class AppService {
   constructor(
     @InjectConnection() private mongo: Connection,
-    @Inject('FIREBASE_BUCKET') private bucket: Bucket,
+    /* @Inject('FIREBASE_BUCKET') private bucket: Bucket, */
   ) {}
 
   private productsCollection = this.mongo.collection('products');
@@ -32,4 +33,17 @@ export class AppService {
   }
 
   public async provideImageProductDetails(id: number): Promise<any> {}
+
+  public async saveNewImageProduct(
+    newProd: ImageProductDetails,
+  ): Promise<{ status: string }> {
+    const insertedProduct =
+      await this.imageProductsCollection.insertOne(newProd);
+
+    if (insertedProduct.insertedId) {
+      return { status: 'Successfully inserted' };
+    } else {
+      return { status: 'Error' };
+    }
+  }
 }
