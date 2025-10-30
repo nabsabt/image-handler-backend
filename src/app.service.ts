@@ -27,6 +27,7 @@ export class AppService {
         productID: 1,
         productThumbnailImage: 1,
         productName: 1,
+        defaultPrice: 1,
       })
       .toArray();
     return prods;

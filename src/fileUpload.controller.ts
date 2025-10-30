@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Logger,
   NotImplementedException,
   Post,
   UploadedFiles,
@@ -10,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { initializeApp } from 'firebase/app';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import * as sharp from 'sharp';
 
 @Controller('fileService')
 export class FileUploadController {
@@ -47,7 +49,28 @@ export class FileUploadController {
          * Assign first image's URL to the thumbnail URL->
          */
         if (i === 0) {
-          thumbnailURL = downloadURL;
+          /**
+           * upload small thumbnail img seperately->
+           */
+          sharp(files[i].buffer)
+            .resize({ width: 100, height: 100 })
+            .jpeg()
+            .toBuffer()
+            .then(async (data) => {
+              const thumbnailFileRef = ref(
+                fireBaseStorage,
+                `${folderPath}/thumbnail_${files[i].originalname}`,
+              );
+              const thumbnailSnapshot = await uploadBytes(
+                thumbnailFileRef,
+                data,
+                {
+                  contentType: files[i].mimetype,
+                },
+              );
+              thumbnailURL = await getDownloadURL(thumbnailSnapshot.ref);
+            })
+            .catch((err) => Logger.log('thumbnail crop&upload failed: ', err));
         }
         imageURLs.push(downloadURL);
       } catch (error) {
