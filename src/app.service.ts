@@ -28,12 +28,18 @@ export class AppService {
         productThumbnailImage: 1,
         productName: 1,
         defaultPrice: 1,
+        productImages: 1,
       })
       .toArray();
     return prods;
   }
 
-  public async provideImageProductDetails(id: number): Promise<any> {}
+  public async provideImageProductDetails(id: number): Promise<any> {
+    const prod = await this.imageProductsCollection.findOne({
+      productID: parseInt(id as any),
+    });
+    return prod;
+  }
 
   public async saveNewImageProduct(
     newProd: ImageProductDetails,

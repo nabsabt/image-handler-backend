@@ -12,13 +12,15 @@ export class AppController {
   }
 
   @Get('getImageProductList')
-  public async getProductList(): Promise<Array<ImageModel>> {
+  public async getProductList(): Promise<Array<any>> {
     return await this.appService.provideImageProducts();
   }
 
   @Get('getImageProduct/:id')
-  public async getProduct(@Param('id') id: number): Promise<Array<ImageModel>> {
-    return this.appService.provideImageProductDetails(id);
+  public async getProduct(
+    @Param('id') id: number,
+  ): Promise<ImageProductDetails> {
+    return await this.appService.provideImageProductDetails(id);
   }
 
   @Post('postNewProduct')

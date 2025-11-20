@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { MongooseModule } from '@nestjs/mongoose';
-import * as admin from 'firebase-admin';
 import { FileUploadController } from './fileUpload.controller';
 
 @Module({
@@ -17,32 +16,17 @@ import { FileUploadController } from './fileUpload.controller';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_CONNECTION'),
+        //uri: configService.get<string>('MONGODB_CONNECTION'),
+        uri: configService.get<string>(
+          process.env.NODE_ENV === 'production'
+            ? 'MONGODB_CONNECTION_PROD'
+            : 'MONGODB_CONNECTION_DEV',
+        ),
       }),
     }),
   ],
   controllers: [AppController, FileUploadController],
-  providers: [
-    AppService,
-    /* {
-      provide: 'FIREBASE_BUCKET',
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const credentials = JSON.parse(
-          config.get<string>('FIREBASE_CREDENTIALS'),
-        );
-
-        const app = admin.initializeApp({
-          credential: admin.credential.cert(credentials),
-          storageBucket: 'gorsium-app.firebasestorage.app',
-        });
-
-        return admin.storage().bucket();
-      },
-    }, */
-  ],
-  exports: [
-    /* 'FIREBASE_BUCKET' */
-  ],
+  providers: [AppService],
+  exports: [],
 })
 export class AppModule {}
